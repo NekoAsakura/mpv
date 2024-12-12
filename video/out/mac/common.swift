@@ -75,7 +75,7 @@ class Common: NSObject {
     }
 
     func initWindow(_ vo: UnsafeMutablePointer<vo>, _ previousActiveApp: NSRunningApplication?) {
-        let (targetScreen, wr, _) = getInitProperties(vo)
+        let (targetScreen, wr, forcePosition) = getInitProperties(vo)
 
         guard let view = self.view else {
             log.error("Something went wrong, no View was initialized")
@@ -104,6 +104,12 @@ class Common: NSObject {
         window.setMinimized(minimized)
         window.makeMain()
         window.makeKey()
+        window.isMovable = !forcePosition
+        if forcePosition {
+            NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDragged]) { [weak self] _ in
+                return nil
+            }
+        }
 
         view.layer?.contentsScale = window.backingScaleFactor
 
