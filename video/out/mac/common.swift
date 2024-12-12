@@ -411,6 +411,7 @@ class Common: NSObject {
 
     func getWindowGeometry(forScreen screen: NSScreen,
                            videoOut vo: UnsafeMutablePointer<vo>) -> (NSRect, Bool) {
+        let option = OptionHelper(vo, vo.pointee.global)
         let r = screen.convertRectToBacking(screen.frame)
         let targetFrame = option.mac.macos_geometry_calculation == FRAME_VISIBLE
             ? screen.visibleFrame : screen.frame
@@ -437,7 +438,7 @@ class Common: NSObject {
         let y = CGFloat(-geo.win.y1)
         let x = CGFloat(geo.win.x0)
         let wr = screen.convertRectFromBacking(NSRect(x: x, y: y, width: width, height: height))
-        return (wr, Bool(geo.flags & Int32(VO_WIN_FORCE_POS)))
+        return (wr, Bool(geo.flags & Int32(option.vo.force_window_position)))
     }
 
     func getInitProperties(_ vo: UnsafeMutablePointer<vo>) -> (NSScreen, NSRect, Bool) {
